@@ -1,0 +1,32 @@
+-- This file has been generated from package.yaml by hpack version 0.28.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: f77633a0cad6001b28b04e6bf4e695a93accadb6eb905c6d56612e22d44f3b4a
+
+name:           setup
+version:        0.1.0.0
+description:    The setup instructions for my dorfile repository.
+category:       Web
+homepage:       https://github.com/githubuser/setup#readme
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2018 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    README.md
+
+executable setup
+  main-is: Main.hs
+  other-modules:
+      Yadm
+      Paths_setup
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , shake >=0.16.4 && <1
+  default-language: Haskell2010

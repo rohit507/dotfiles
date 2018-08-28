@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+from subprocess import run
+from os.path import isfile
+from pathlib import Path
+
+# Initial install and bootstrap operations for dotfiles.
+
+# Set up basic commands
+run("sudo apt install -qq git wget curl aptitude fish subversion", shell=True, check=True)
+
+# Install Haskell stack
+if not isfile("/usr/local/bin/stack"):
+    run("wget -qO- https://get.haskellstack.org/ | sh", shell=True, check=True)
+
+# Setup and build the bootstrap script 
+
+setup_dir = Path.home().joinpath(".yadm")
+
+run("stack build", shell=True, check=True, cwd=setup_dir)
+run("stack exec -- setup", shell=True, check=True, cwd=setup_dir)
+
