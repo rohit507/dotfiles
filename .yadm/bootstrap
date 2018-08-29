@@ -7,7 +7,12 @@ from pathlib import Path
 # Initial install and bootstrap operations for dotfiles.
 
 # Set up basic commands
-run("sudo apt install -qq git wget curl aptitude fish subversion", shell=True, check=True)
+run("sudo apt install -qq git wget", shell=True, check=True)
+
+# fish 
+# aptitude 
+# curl 
+# subversion 
 
 # Install Haskell stack
 if not isfile("/usr/local/bin/stack"):

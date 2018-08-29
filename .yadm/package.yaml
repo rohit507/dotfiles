@@ -14,8 +14,59 @@ extra-source-files:
 dependencies:
   - base >= 4.7 && < 5
   - shake >= 0.16.4 && < 1
+  - unordered-containers >= 0.2.9.0 && < 0.3
+
+default-extensions:
+    ApplicativeDo
+    BangPatterns
+    CPP
+    ConstraintKinds
+    DataKinds
+    DefaultSignatures
+    DeriveDataTypeable
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveLift
+    DeriveTraversable
+    DerivingStrategies
+    DuplicateRecordFields
+    EmptyCase
+    EmptyDataDecls
+    ExistentialQuantification
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    GeneralizedNewtypeDeriving
+    ImplicitParams
+    InstanceSigs
+    KindSignatures
+    LambdaCase
+    MultiParamTypeClasses
+    MultiWayIf
+    NamedFieldPuns
+    NoMonomorphismRestriction
+    OverloadedLabels
+    OverloadedLists
+    OverloadedStrings
+    PackageImports
+    PatternSynonyms
+    QuasiQuotes
+    RankNTypes
+    RecordWildCards
+    RecursiveDo
+    ScopedTypeVariables
+    StandaloneDeriving
+    TemplateHaskell
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    TypeFamilyDependencies
+    TypeOperators
+    ViewPatterns
 
 executables:
   setup:
-    source-dirs:      src
+    source-dirs:      setup
     main:             Main.hs
