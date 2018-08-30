@@ -22,12 +22,13 @@ main = shakeWithPlugins pluginList shakeOpts $ do
 
 -- Things to do during bootstrap
 --    -- Yadm
---    -- Emacs
+--       -- Decrypt
 --    -- Vim
 --    -- Fish
 --    -- GitFlow 
 --    -- Google Chrome 
 --    -- LastPass 
+--    -- Emacs
 --    -- Spacemacs 
 --       -- Fonts
 --    -- Facebook Messenger
