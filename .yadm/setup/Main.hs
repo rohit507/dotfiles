@@ -20,3 +20,21 @@ main = shakeWithPlugins pluginList shakeOpts $ do
     action $ do
         Apt.install ["fish","git","subversion"]
 
+-- Things to do during bootstrap
+--    -- Yadm
+--    -- Emacs
+--    -- Vim
+--    -- Fish
+--    -- GitFlow 
+--    -- Google Chrome 
+--    -- LastPass 
+--    -- Spacemacs 
+--       -- Fonts
+--    -- Facebook Messenger
+--    -- Slack
+--    -- Discord
+--    -- Cinnamon
+--       -- GTK Themes 
+--       -- Icon Themes
+--    -- Solarized-Gtern
+
