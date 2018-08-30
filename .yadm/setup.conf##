@@ -13,11 +13,11 @@
 IMPORTED_ENV_VARS = ["HOME"]
 
 # The root directory where the setup project is stored along with the yadm repository 
-# (default: YADM_ROOT = $HOME/.yadm/)
+# (default: YADM_ROOT = $HOME/.yadm)
 YADM_ROOT = ${HOME}/.yadm
 
 # Directory where we store logs/metadata about whether a particular operation
-# has been run or not. (default : STATUS_DIR = $YAML_ROOT/.status/)
+# has been run or not. (default : STATUS_DIR = $YAML_ROOT/.status)
 STATUS_DIR = ${YADM_ROOT}/.status
 
 

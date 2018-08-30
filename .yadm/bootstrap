@@ -22,6 +22,5 @@ if not isfile("/usr/local/bin/stack"):
 
 setup_dir = Path.home().joinpath(".yadm")
 
-run("stack build", shell=True, check=True, cwd=setup_dir)
-run("stack exec -- setup", shell=True, check=True, cwd=setup_dir)
+run("stack build && stack exec -- setup", shell=True, check=True, cwd=setup_dir)
 

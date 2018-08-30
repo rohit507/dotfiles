@@ -15,6 +15,8 @@ dependencies:
   - base >= 4.7 && < 5
   - shake >= 0.16.4 && < 1
   - unordered-containers >= 0.2.9.0 && < 0.3
+  - bytestring >= 0.10.8.2 && < 0.11
+  - binary >= 0.8.5.1 && < 0.9
 
 default-extensions:
     ApplicativeDo
@@ -48,8 +50,6 @@ default-extensions:
     NamedFieldPuns
     NoMonomorphismRestriction
     OverloadedLabels
-    OverloadedLists
-    OverloadedStrings
     PackageImports
     PatternSynonyms
     QuasiQuotes

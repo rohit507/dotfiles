@@ -1,13 +1,22 @@
 module Main where
 
 import Shake 
-
-main :: IO ()
-main = shakeWithConfig "setup.conf" shakeOpts $ do 
-    action $ printConfigVars 
+import qualified Config (plugin)
+import qualified Apt
 
 shakeOpts :: ShakeOptions 
 shakeOpts = shakeOptions{
       shakeFiles=".build"
-    , shakeProgress=progressSimple
     }
+
+pluginList :: [Plugin] 
+pluginList = [
+      Config.plugin "setup.conf"
+    , Apt.plugin 
+    ]
+
+main :: IO ()
+main = shakeWithPlugins pluginList shakeOpts $ do
+    action $ do
+        Apt.install ["fish","git","subversion"]
+
