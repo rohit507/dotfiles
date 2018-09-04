@@ -68,13 +68,13 @@ emacsInit :: Action ()
 emacsInit = do 
     Apt.install ["emacs"]
     -- install Haskell IDE engine as per 
-    -- https://github.com/haskell/haskell-ide-engine
+    --      https://github.com/haskell/haskell-ide-engine
     -- Spacemacs init
     -- Fonts
     -- Intero / brittany deps 
-    -- etc...
+    -- etc..
 
-lastpassInit :: Action () 
+lastpassInit :: Action ()
 lastpassInit = withTempDir $ \ tempDir -> do
     -- TODO add statua flag
     command_ [Cwd tempDir, Shell] "wget" $
@@ -83,7 +83,8 @@ lastpassInit = withTempDir $ \ tempDir -> do
     cmd_ [Cwd tempDir] "./install_lastpass.sh"
 
 gtermSolarizedInit :: Action ()
-gtermSolarizedInit = withTempDir $ \ tempDir -> do 
+gtermSolarizedInit = withTempDir $ \ tempDir -> do
+    -- TODO :: add Status flag. 
     Apt.install ["dconf-cli"] 
     cmd_ [Cwd tempDir, Shell] "git clone https://github.com/Anthony25/gnome-terminal-colors-solarized.git"
     cmd_ [Shell, Cwd $ tempDir </> "gnome-terminal-colors-solarized"] "./install.sh"  
@@ -112,4 +113,5 @@ gtermSolarizedInit = withTempDir $ \ tempDir -> do
 --    -- Docker
 --    -- Virtualbox 
 --    -- Nix
+--    -- Keyboard.io
 --    -- other default apt installs 
