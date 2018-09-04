@@ -20,4 +20,4 @@ YADM_ROOT = ${HOME}/.yadm
 # has been run or not. (default : STATUS_DIR = $YAML_ROOT/.status)
 STATUS_DIR = ${YADM_ROOT}/.status
 
-
+# 

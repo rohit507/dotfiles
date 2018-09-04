@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 70b846f54c5dc995158c211bbdcaf087686ecf0ae3c745424750b131bdf8fd2b
+-- hash: 0b3c556863434d5336d0228be438a81e4ed4cfe9814aa58d993c74a6c4e8315f
 
 name:           setup
 version:        0.1.0.0
@@ -26,6 +26,7 @@ executable setup
       Config
       Plugin
       Shake
+      Stack
       Util
       Yadm
       Paths_setup
