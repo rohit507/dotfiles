@@ -20,4 +20,5 @@ YADM_ROOT = ${HOME}/.yadm
 # has been run or not. (default : STATUS_DIR = $YAML_ROOT/.status)
 STATUS_DIR = ${YADM_ROOT}/.status
 
-# 
+# Directory for various temporary install files we download and use 
+INSTALL_DIR = ${YADM_ROOT}/.install

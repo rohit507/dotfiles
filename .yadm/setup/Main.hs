@@ -28,10 +28,11 @@ main = shakeWithPlugins pluginList shakeOpts $ do
         gitInit 
         vimInit
         emacsInit
-        gtermInit
+        -- gtermSolarizedInit
         -- fishInit
         -- chromeInit
         -- lastpassInit 
+        Apt.install ["gimp","inkscape","lxc","lxd","virtualbox"]
 
 
 yadmInit :: Action ()
@@ -65,7 +66,9 @@ chromeInit = do
 
 emacsInit :: Action () 
 emacsInit = do 
-    Apt.install ["emacs"] 
+    Apt.install ["emacs"]
+    -- install Haskell IDE engine as per 
+    -- https://github.com/haskell/haskell-ide-engine
     -- Spacemacs init
     -- Fonts
     -- Intero / brittany deps 
@@ -97,24 +100,14 @@ gtermSolarizedInit = withTempDir $ \ tempDir -> do
 -- .bashrc
 --    -- Aliases 
 --    -- Exports
---    -- Stack 
 --       -- Pandoc 
 --       -- Brittany 
---    -- LastPass 
---    -- Emacs
---    -- Spacemacs 
---       -- Fonts
 --    -- Facebook Messenger
 --    -- Slack
 --    -- Discord
 --    -- Cinnamon
 --       -- GTK Themes 
 --       -- Icon Themes
---    -- Solarized-Gtern
---    -- Gimp
---    -- Inkscape
---    -- LXC / LXD
---    -- virtual box
 --    -- Vagrant
 --    -- Docker
 --    -- Virtualbox 
