@@ -1,21 +1,28 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Config (
       plugin
+    , EnvVar
+    , EnvVars
+    , MonadEnv
+    , queryEnv
+    , applyEnv
+    , printConfigVar
     , printConfigVars
     , need
     , want
     , (%>)
     , (|%>)
-    , (?>) 
+    , (?>)
     , (&%>)
     -- , (&?>)
     , orderOnly
     , doesFileExist
     , doesDirectoryExist
     , getDirectoryContents
-    , getDirectoryFiles 
-    , getDirectoryDirs 
-    , replaceEnvRule 
-    , replaceEnvAction) where
+    , getDirectoryFiles
+    , getDirectoryDirs
+    ) where
 
 
 import Development.Shake hiding (
@@ -23,38 +30,35 @@ import Development.Shake hiding (
     , want
     , (%>)
     , (|%>)
-    , (?>) 
+    , (?>)
     , (&%>)
     , (&?>)
     , orderOnly
     , doesFileExist
     , doesDirectoryExist
     , getDirectoryContents
-    , getDirectoryFiles 
-    , getDirectoryDirs 
+    , getDirectoryFiles
+    , getDirectoryDirs
+    , getEnv
     )
 
-import qualified Development.Shake as S (
-      need
-    , want
-    , (%>)
-    , (|%>)
-    , (?>) 
-    , (&%>)
-    , (&?>)
-    , orderOnly
-    , doesFileExist
-    , doesDirectoryExist
-    , getDirectoryContents
-    , getDirectoryFiles 
-    , getDirectoryDirs 
-    )
+import qualified Development.Shake as S
 
-import Development.Shake.Command 
+import Data.Text (Text)
+import qualified Data.Text as T
+
+import Data.Yaml
+
+import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
 import Development.Shake.Config
 import Development.Shake.Classes
+
+import Control.Monad
+
+import Debug.Trace
+import GHC.Stack
 
 import Plugin
 
@@ -62,168 +66,219 @@ import qualified Data.HashMap.Lazy as HashMap
 import Data.HashMap.Lazy (HashMap)
 
 import Data.Char
+import Data.String
 
-import System.Environment
+import qualified System.Environment as SE
 
-plugin :: FilePath -> Plugin 
-plugin configFile = Plugin pre post
-    where 
-        pre shakeOpts = do
-            config <- readConfigFileWithEnvVars "IMPORTED_ENV_VARS" configFile
-            let shakeExtra' = addShakeExtra (EnvVars config) (shakeExtra shakeOpts)
-            return $ shakeOpts{shakeExtra = shakeExtra'} 
+type EnvVar = Text
 
-        post = getEnvValRule >>= usingConfig . unEnvVars >> return () 
+newtype EnvVars = EnvVars {unEnvVars :: Object} deriving (Show)
 
-getVars :: [String] -> IO [(String,String)]
-getVars envVars = mapM getVar envVars
+-- Stuff modifed from http://hackage.haskell.org/package/shake-0.16.4/docs/src/
+data Expr = Exprs [Expr] | Lit Text | Var Text deriving (Show,Eq)
 
-getVar :: String -> IO (String,String)
-getVar varName = lookupEnv varName >>= (\ x -> case x of
-    Just varVal -> return (varName,varVal)
-    Nothing -> fail $ "Did not find devault env var '$"++varName++"'."
-    )
+class (Monad m) => MonadEnv m where
+  getEnv    :: m EnvVars
+  queryEnv  :: FromJSON a => String -> m a
+  queryEnv var = getEnv >>= (\ env -> return $ queryEnv var env)
+  applyEnv  :: String -> m String
+  applyEnv str = getEnv >>= (\ env -> return $ applyEnv str env)
+  {-# MINIMAL getEnv #-}
 
-readConfigFileWithEnvVars :: String -> FilePath -> IO (HashMap String String)
-readConfigFileWithEnvVars varListName configFile = do
-    maybeVarNames <- HashMap.lookup varListName <$> readConfigFile configFile
-    varNames <- case maybeVarNames of
-        Nothing -> fail $ "config file '"++configFile++"' must have variable '"++varListName
-                              ++"' in as a literal of type `[String]`."
-        Just a -> return a
-    envVars  <- getVars (read @[String] varNames)
-    readConfigFileWithEnv envVars configFile
+instance MonadEnv ((->) EnvVars) where
+  getEnv = id
+  queryEnv = lookupEnvVar
+  applyEnv = insertEnvVar
 
-newtype EnvVars = EnvVars {unEnvVars :: HashMap String String}
-
-printConfigVars :: Action () 
-printConfigVars = do 
-    keys <- getConfigKeys 
-    (zip keys <$> mapM getConfig keys) >>= liftIO . print 
-
-
-getEnvValRule :: Rules EnvVars
-getEnvValRule = do
-    me :: Maybe EnvVars <- getShakeExtraRules 
-    case me of 
-        Nothing -> fail $ "No Environment Variables Loaded into shakeOpts." 
-        Just e  -> return e 
-
-getEnvValAction :: Action EnvVars
-getEnvValAction = do
+instance MonadEnv Action where
+  getEnv = do
     me :: Maybe EnvVars <- getShakeExtra
-    case me of 
-        Nothing -> fail $ "No Environment Variables Loaded into shakeOpts." 
-        Just e  -> return e 
+    case me of
+        Nothing -> fail $ "No Environment Variables Loaded into shakeOpts."
+        Just e  -> return e
 
-replaceEnvRule :: [FilePattern] -> Rules ([FilePattern], Action ())
-replaceEnvRule pats = do 
-    e <- getEnvValRule
-    let exprs = map lexxExpr pats 
-    return (map (askExpr e) exprs, mapM_ getConfig $ concatMap (getExprVars e) exprs) 
+instance MonadEnv Rules where
+  getEnv = do
+    me :: Maybe EnvVars <- getShakeExtraRules
+    case me of
+        Nothing -> fail $ "No Environment Variables Loaded into shakeOpts."
+        Just e  -> return e
 
-replaceEnvAction :: [FilePattern] -> Action [FilePattern]
-replaceEnvAction pats = do 
-    e <- getEnvValAction
-    let exprs = map lexxExpr pats 
-    mapM_ getConfig $ concatMap (getExprVars e) exprs
-    return $ map (askExpr e) exprs
+readConfigWithEnvVars :: EnvVar -> FilePath -> IO EnvVars
+readConfigWithEnvVars imports configFile = do
+  hm :: Object <- decodeFileThrow configFile
+  mV <-
+    case HashMap.lookup imports hm of
+      Nothing ->
+        fail $ "No variable '" ++ T.unpack imports ++ "' with list of env vars"
+      Just a -> return a
+  -- retrieve env vars from file
+  vars :: [EnvVar] <- parseMonad parseJSON mV
+  -- get those vars from the environment
+  sysEnv :: [(EnvVar, Value)] <-
+    zip vars <$> mapM (fmap (String . T.pack) . SE.getEnv . T.unpack) vars
+  let unioned :: Object = HashMap.union (HashMap.fromList sysEnv) hm
+      fixed :: Object = fixValInEnv fixed <$> unioned
+  return $ EnvVars fixed
 
--- Stuff fromhttp://hackage.haskell.org/package/shake-0.16.4/docs/src/
-data Expr = Exprs [Expr] | Lit String | Var String deriving (Show,Eq)
-
-askExpr :: EnvVars -> Expr -> String
-askExpr ev@(EnvVars e) = f
-    where f (Exprs xs) = concat $ map f xs
-          f (Lit x) = x
-          f (Var x) = case HashMap.lookup x e of 
-             Nothing -> error $ "could not find '"++x++"' in environment"
-             Just v  -> askExpr ev $ lexxExpr v 
-
-getExprVars :: EnvVars -> Expr -> [String]
-getExprVars e (Exprs l) = concatMap (getExprVars e) l 
-getExprVars _ (Lit _) = []
-getExprVars e@(EnvVars m) (Var v) = case HashMap.lookup v m of 
-    Nothing -> [v] 
-    Just l  -> v : getExprVars e (lexxExpr l) 
-
-lexxExpr :: String -> Expr -- snd will start with one of " :\n\r" or be empty
-lexxExpr = exprs . fst .  f
+plugin :: FilePath -> Plugin
+plugin configFile = Plugin pre post
     where
-        exprs [x] = x
-        exprs xs = Exprs xs
+        pre shakeOpts = do
+            config <- readConfigWithEnvVars "IMPORTED_ENV_VARS" configFile
+            let shakeExtra' = addShakeExtra config (shakeExtra shakeOpts)
+            return $ shakeOpts{shakeExtra = shakeExtra'}
 
-        special = \x -> x <= ':' && (x == ':' || x == ' ' || x == '$' || x == '\r' || x == '\n' || x == '\0')
-        
-        f x = case break special x of (a,x) -> if a == "" then g x else Lit a $: g x
+        upt (a, b) = (T.unpack a, T.unpack . renderValue $ b)
 
-        x $: (xs,y) = (x:xs,y)
+        transformMap = HashMap.fromList . map upt . HashMap.toList . unEnvVars
 
-        dropSpace = dropWhile (== ' ')
+        post = getEnv >>= usingConfig . transformMap >> return ()
 
-        dropN ('\n':xs) = xs
-        dropN x         = x
+printConfigVar :: String -> Action ()
+printConfigVar ev = queryEnv ev >>= liftIO . print . ((ev ++ " : ") ++) . show @Value
 
-        isVar x = x == '-' || x == '_' || isLower x || isUpper x || isDigit x
+printConfigVars :: Action ()
+printConfigVars =
+  getEnv >>= mapM_ (printConfigVar . T.unpack) . HashMap.keys . unEnvVars
 
-        isVarDot x = x == '.' || isVar x
+fixValInEnv :: Object -> Value -> Value
+fixValInEnv hm (Object o) = Object $ fixValInEnv hm <$> o
+fixValInEnv hm (Array  a) = Array  $ fixValInEnv hm <$> a
+fixValInEnv hm (String t) = String . renderExpr hm . parseExpr $ t
+fixValInEnv _  v          = v
 
-        g x | head x /= '$' = ([], x)
-        g x | c_x <- tail x, (c:x) <- c_x = case c of
-            '$' -> Lit "$" $: f x
-            ' ' -> Lit " " $: f x
-            ':' -> Lit ":" $: f x
-            '\n' -> f $ dropSpace x
-            '\r' -> f $ dropSpace $ dropN x
-            '{' | (name,x) <- span isVarDot x, not $ name == "", ('}':xs) <- x -> Var name $: f xs
-            _   | (name,x) <- span isVar  c_x, not $ name == "" -> Var name $: f x
-            _   -> error "Unexpect $ followed by unexpected stuff"
+lookupEnvVar :: FromJSON a => String -> EnvVars -> a
+lookupEnvVar v (EnvVars hm) =
+  case mVal of
+    Nothing -> error $ "No variable '" ++ v ++ "' found in env."
+    Just a -> a
+  where
+    mVal = do
+      val <- HashMap.lookup (T.pack v) hm
+      parseMaybe parseJSON val
 
-need :: [FilePath] -> Action () 
-need pats =  replaceEnvAction pats >>= S.need
+insertEnvVar :: String -> EnvVars -> String
+insertEnvVar s (EnvVars hm) = T.unpack . renderExpr hm . parseExpr . T.pack $ s
 
-want :: [FilePath] -> Rules () 
-want pats = fst <$> replaceEnvRule pats >>= S.want
+tt :: Show a => String -> a -> a
+tt _ = id -- traceShowId . traceStack (p ++ " :")
+
+parseExpr :: HasCallStack => Text -> Expr
+parseExpr =  exprs . fst . f . tt "pe"
+  where
+    exprs [x] = x
+    exprs xs = Exprs xs
+
+    special =
+      \x ->
+        x <= ':' &&
+        (x == ':' || x == ' ' || x == '$' || x == '\r' || x == '\n' || x == '\0')
+
+    f :: HasCallStack => Text -> ([Expr], Text)
+    f x =
+      case T.break special x of
+        (a, x) ->
+          if a == ""
+            then g (tt "f1" x)
+            else Lit a $: g (tt "f2" x)
+
+    x $: (xs, y) = (x:xs, y)
+
+    dropSpace = T.dropWhile (== ' ')
+
+    dropN x = snd . T.break (== '\n') $ x
+
+    isVar x = x == '-' || x == '_' || isLower x || isUpper x || isDigit x
+
+    isVarDot x = x == '.' || isVar x
+
+
+    g :: HasCallStack => Text -> ([Expr],Text)
+    g x
+      | T.null x = ([], x)
+    g x
+      | T.head (tt "g1" x) /= '$' = ([], x)
+    g x
+      | c_x <- T.tail (tt "g2" x)
+      , Just (c, x) <- T.uncons c_x =
+        case c of
+          '$' -> Lit "$" $: f (tt "g3" x)
+          ' ' -> Lit " " $: f (tt "g4" x)
+          ':' -> Lit ":" $: f (tt "g5" x)
+          '\n' -> f $ dropSpace x
+          '\r' -> f $ dropSpace $ dropN (tt "g6" x)
+          '{'
+            | (name, x) <- T.span isVarDot (tt "g7" x)
+            , not $ name == ""
+            , Just ('}', xs) <- T.uncons (tt "g8" x) -> Var name $: f (tt "g9" xs)
+          _
+            | (name, x) <- T.span isVar c_x
+            , not $ name == "" -> Var name $: f (tt "g9" x)
+          _ -> error "Unexpect $ followed by unexpected stuff"
+
+renderExpr :: Object -> Expr -> Text
+renderExpr hm (Exprs xs) = mconcat $ map (renderExpr hm) xs
+renderExpr hm (Lit x) = x
+renderExpr hm (Var x) =
+  case HashMap.lookup x hm of
+    Nothing -> error $ "could not find '" ++ T.unpack x ++ "' in environment"
+    Just v  -> renderExpr hm . parseExpr . renderValue $ v
+
+renderValue :: Value -> Text
+renderValue (String s) = s
+renderValue (Bool   b) = T.pack $ show b
+renderValue (Number s) = T.pack $ show s
+renderValue (Object _) = error "Cannot render Dictionary in env"
+renderValue (Array  _) = error "Cannot render Array in env"
+renderValue Null       = error "Cannot render Null in env"
+
+
+need :: [FilePath] -> Action ()
+need pats = mapM applyEnv pats >>= S.need
+
+want :: [FilePath] -> Rules ()
+want pats = mapM applyEnv pats >>= S.want
 
 (%>) :: FilePattern -> (FilePath -> Action ()) -> Rules ()
-(%>) pat act = do 
-    (pat':[], added) <- replaceEnvRule [pat]
-    (S.%>) pat' (\ f -> added >> act f)
+(%>) pat act = do
+    pat' <- applyEnv pat
+    (S.%>) pat' act
 
 (|%>) :: [FilePattern] -> (FilePath -> Action ()) -> Rules ()
-(|%>) pats act = do 
-    (pats', added) <- replaceEnvRule pats
-    (S.|%>) pats' (\ f -> added >> act f)
+(|%>) pats act = do
+    pats' <- mapM applyEnv pats
+    (S.|%>) pats' act
 
 (?>) :: (FilePath -> Bool) -> (FilePath -> Action ()) -> Rules ()
-(?>) pred act = do 
-    env <- getEnvValRule
-    let pred' = pred . askExpr env . lexxExpr 
+(?>) pred act = do
+    (EnvVars env) <- getEnv
+    let pred' = pred . T.unpack . renderExpr env . parseExpr . T.pack
     (S.?>) pred' act
 
 (&%>) :: [FilePattern] -> ([FilePath] -> Action ()) -> Rules ()
-(&%>) pats act = do 
-    (pats', added) <- replaceEnvRule pats
-    (S.&%>) pats' (\ f -> added >> act f)
+(&%>) pats act = do
+    pats' <- mapM applyEnv pats
+    (S.&%>) pats' act
 
 
 orderOnly :: [FilePath] -> Action ()
-orderOnly pats =replaceEnvAction pats >>= S.orderOnly
+orderOnly pats = mapM applyEnv pats >>= S.orderOnly
 
 doesFileExist :: FilePath -> Action Bool
-doesFileExist pat = head <$> replaceEnvAction [pat] >>= S.doesFileExist
+doesFileExist pat = applyEnv pat >>= S.doesFileExist
 
 doesDirectoryExist :: FilePath -> Action Bool
-doesDirectoryExist pat = head <$> replaceEnvAction [pat] >>= S.doesDirectoryExist
+doesDirectoryExist pat = applyEnv pat >>= S.doesDirectoryExist
 
 getDirectoryContents :: FilePath -> Action [FilePath]
-getDirectoryContents pat = head <$> replaceEnvAction [pat] >>= S.getDirectoryContents
+getDirectoryContents pat = applyEnv pat >>= S.getDirectoryContents
 
 getDirectoryFiles :: FilePath -> [FilePattern] -> Action [FilePath]
 getDirectoryFiles pat pats = do
-    pat' <- head <$> replaceEnvAction [pat] 
-    pats' <- replaceEnvAction pats
+    pat' <- applyEnv pat
+    pats' <- mapM applyEnv pats
     S.getDirectoryFiles pat' pats'
 
 getDirectoryDirs :: FilePath -> Action [FilePath]
-getDirectoryDirs pat =  head <$> replaceEnvAction [pat] >>= S.getDirectoryDirs
+getDirectoryDirs pat =  applyEnv pat >>= S.getDirectoryDirs

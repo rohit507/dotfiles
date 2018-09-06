@@ -7,15 +7,15 @@ import Development.Shake as E hiding (
     , want
     , (%>)
     , (|%>)
-    , (?>) 
+    , (?>)
     , (&%>)
     , (&?>)
     , orderOnly
     , doesFileExist
     , doesDirectoryExist
     , getDirectoryContents
-    , getDirectoryFiles 
-    , getDirectoryDirs 
+    , getDirectoryFiles
+    , getDirectoryDirs
     )
 
 import Development.Shake.Command as E
@@ -24,7 +24,8 @@ import Development.Shake.Util as E
 import Development.Shake.Config as E
 import Development.Shake.Classes as E
 
+import Data.String
+
+
 import Plugin as E
 import Config as E hiding (plugin)
-
-

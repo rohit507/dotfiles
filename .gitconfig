@@ -1,0 +1,8 @@
+[alias]
+	tree = log --graph --decorate --pretty=oneline --abbrev-commit
+
+[core]
+	excludesfile = /home/rkr/.gitignore_global
+	editor = vim
+[user]
+	editor = vim

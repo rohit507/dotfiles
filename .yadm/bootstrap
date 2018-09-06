@@ -9,18 +9,17 @@ from pathlib import Path
 # Set up basic commands
 run("sudo apt install -qq git wget", shell=True, check=True)
 
-# fish 
-# aptitude 
-# curl 
-# subversion 
+# fish
+# aptitude
+# curl
+# subversion
 
 # Install Haskell stack
 if not isfile("/usr/local/bin/stack"):
     run("wget -qO- https://get.haskellstack.org/ | sh", shell=True, check=True)
 
-# Setup and build the bootstrap script 
+# Setup and build the bootstrap script
 
 setup_dir = Path.home().joinpath(".yadm")
 
 run("stack build && stack exec -- setup", shell=True, check=True, cwd=setup_dir)
-
