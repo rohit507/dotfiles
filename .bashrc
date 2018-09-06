@@ -1,4 +1,5 @@
 for file in ~/.bashrc.d/*.bashrc;
-do
- source “$file”
+do 
+	chmod +x "$file"  
+	source “$file”
 done 

@@ -1,4 +1,5 @@
 for file in ~/.profile.d/*.profile;
 do
- source “$file”
+	chmod +x "$file"  
+ 	source “$file”
 done
