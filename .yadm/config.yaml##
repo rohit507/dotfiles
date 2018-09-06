@@ -31,3 +31,12 @@ DEFAULT_PACKAGES:
   - lxc
   - lxd
   - virtualbox
+
+# GTK and icon Themes we want to install
+THEME_PACKAGES:
+  - blackbird-gtk-theme
+  - papirus-icon-theme
+  - numix-gtk-theme
+  - numix-blue-gtk-theme
+  - numix-icon-theme
+  - materia-gtk-theme

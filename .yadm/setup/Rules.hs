@@ -9,44 +9,101 @@ import Util
 import Status
 import Install
 
-vimRules :: Rules ()
-vimRules = action $ Apt.install ["vim","vim-gtk"]
+vimSetup :: Rules ()
+vimSetup = action $ Apt.install ["vim","vim-gtk"]
 
-defaultPackageRule :: Rules ()
-defaultPackageRule = action $ queryEnv "DEFAULT_PACKAGES" >>= Apt.install
+defaultPackageSetup :: Rules ()
+defaultPackageSetup = action $ queryEnv "DEFAULT_PACKAGES" >>= Apt.install
 
-yadmConfigRule :: Rules ()
-yadmConfigRule = action $ do
-  Yadm.gitconfig "user.name" "Rohit Ramesh"
-  Yadm.gitconfig "user.email" "rohit507@gmail.com"
+themePackageSetup :: Rules ()
+themePackageSetup = action $ queryEnv "THEME_PACKAGES" >>= Apt.install
 
-{-
-chromeInit :: Rules ()
-chromeInit = do
+yadmConfigSetup :: String -> String -> Rules ()
+yadmConfigSetup name email = action $ do
+  Yadm.gitconfig "user.name" name
+  Yadm.gitconfig "user.email" email
+
+gitSetup :: Rules ()
+gitSetup = action $ Apt.install ["git","git-flow"]
+
+
+lastpassSetup :: Rules ()
+lastpassSetup = withInstallDir "lastpass" $ \ dir -> do
+
+  -- Download the file
+  dir </> "lplinux.tar.bz2" %> $ \ out ->
+      command_ [Cwd dir, Shell] "wget"
+      ["https://download.cloud.lastpass.com/linux/lplinux.tar.bz2"]
+
+  -- extract the contents
+  map (dir </>) ["install_lastpass.sh"] %>
+    cmd_ [Cwd dir] "tar xvjf lplinux.tar.bz2"
+
+  -- run the install script
+  lpFlag <- withStatusFlag "lastpass.installed" $ cmd_ [Cwd tempDir] "./install_lastpass.sh"
+
+  need [lpFlag]
+
+chromeSetup :: Rules ()
+chromeSetup = withInstallDir "google-chrome" $ \dir -> do
+
+  let keyFile = "linux_signing_key.pub"
+      sourceFile = "google-chrome.list"
+      sourceFileLoc = "${YADM_ROOT}" </> "google-chrome"
+      sourceFileTgt = "/etc/apt/sources.list.d"
+
+  dir </> keyFile %> $ \out -> do
     Apt.install ["wget"]
-    cmd_ [Shell] $ "wget -q -O - https://dl.google.com/linux/linux_signing_key.pub"
-        ++ " | sudo apt-key add"
-    doesFileExist "/etc/apt/sources.list.d/google-chrome.list" >>= \case
-        False -> cmd_ [Shell] $ "sudo cp ~/.yadm/google-chrome.list /etc/apt/sources.list.d/"
-        True -> return ()
-    Apt.update
-    Apt.install ["google-chrome-stable"]
+    let fn = takeFileName out
+        url = "https://dl.google.com/linux/" ++ fn
+    command_ [Cwd dir, Shell] "wget" ["-q", "-O",fn, url]
 
-fishInit :: Action ()
-fishInit = do
-    Apt.install ["fish","git"]
-    -- Install Plugin manager
-    cmd_ [Shell] "curl -L https://get.oh-my.fish | fish"
-    -- Make fish our default shell
-    fishBin <- which "fish"
-    command_ [Traced "chsh"] "chsh" ["--shell",fishBin]
+  keyFlag <- withStatusFlag "google-chrome/key.installed" $ do
+    key <- readFile' $  dir </> "linux_signing_key.pub"
+    command_ [Stdin key] "sudo" ["apt-key,"add"]
 
+  sourceFileTgt </> sourceFile %> $ \ out -> do
+    let stored = sourceFileLoc </> sourceFile
+    want [stored]
+    command_ [] "sudo" ["cp",stored,out]
 
-gitInit :: Rules ()
-gitInit = action $ Apt.install ["git","git-flow"]
+  chromeFlag <- withStatusFlag "google-chrome/chrome.installed" $ do
+    want [keyFlag, sourceFileTgt </> sourceFile]
+    Apt.install ["google-chrome"]
 
+  need [chromeFlag]
 
-emacsInit :: Action ()
+fishSetup :: Rules ()
+fishSetup = do
+   fishInstalledFlag <- withStatusFlag "fish.default" $ do
+      Apt.install ["fish","git"]
+      fishBin <- which "fish"
+      usr <- queryEnv "USER"
+      command_ [Traced "chsh"] "sudo" ["-u", usr, "--shell", fishBin]
+
+   need [fishInstalledFlag]
+
+gtermSolarizedInit :: Rules ()
+gtermSolarizedInit = withInstallDir "getrm-solarized" $ $ \ dir -> do
+
+    let gitUrl = "https://github.com/Anthony25/gnome-terminal-colors-solarized.git"
+        installer = dir </> "install.sh"
+
+    installer %> $\ out -> do
+      Apt.install ["git"]
+      command_ [Cwd dir] "git" ["clone", gitUrl, "./"]
+
+    gtermFlag <- withStatusFlag "gterm-solarized.installed" $ do
+      -- TODO :: add Status flag.
+      Apt.install ["dconf-cli"]
+      want [installer]
+      cmd_ [] installer []
+    -- Add "eval `dircolors /path/to/dircolorsdb`" in your shell configuration
+    --    file (.bashrc, .zshrc, etc...) to use new dircolors.
+    -- For Fish, add the following to config.fish instead:
+	--      eval (dircolors /path/to/dircolorsdb | head -n 1 |
+
+emacsInit :: Rules ()
 emacsInit = do
     Apt.install ["emacs"]
     -- install Haskell IDE engine as per
@@ -56,23 +113,6 @@ emacsInit = do
     -- Intero / brittany deps
     -- etc..
 
-lastpassInit :: Action ()
-lastpassInit = withTempDir $ \ tempDir -> do
-    -- TODO add statua flag
-    command_ [Cwd tempDir, Shell] "wget" $
-        ["https://download.cloud.lastpass.com/linux/lplinux.tar.bz2"]
-    cmd_ [Cwd tempDir] "tar xvjf lplinux.tar.bz2"
-    cmd_ [Cwd tempDir] "./install_lastpass.sh"
 
-gtermSolarizedInit :: Action ()
-gtermSolarizedInit = withTempDir $ \ tempDir -> do
-    -- TODO :: add Status flag.
-    Apt.install ["dconf-cli"]
-    cmd_ [Cwd tempDir, Shell] "git clone https://github.com/Anthony25/gnome-terminal-colors-solarized.git"
-    cmd_ [Shell, Cwd $ tempDir </> "gnome-terminal-colors-solarized"] "./install.sh"
-    -- Add "eval `dircolors /path/to/dircolorsdb`" in your shell configuration
-    --    file (.bashrc, .zshrc, etc...) to use new dircolors.
-    -- For Fish, add the following to config.fish instead:
-	--      eval (dircolors /path/to/dircolorsdb | head -n 1 |
 
 -}
