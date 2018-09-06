@@ -5,6 +5,7 @@ import qualified Config (plugin)
 import qualified Apt
 import qualified Yadm
 import qualified Stack
+import qualified Status
 import Rules
 
 shakeOpts :: ShakeOptions
@@ -18,13 +19,28 @@ pluginList = [
     , Apt.plugin
     , Yadm.plugin
     , Stack.plugin
+    , Status.plugin
     ]
 
 main :: IO ()
 main = shakeWithPlugins pluginList shakeOpts $ do
-  vimRules
-  yadmConfigRule
-  defaultPackageRule
+  vimSetup
+  gitSetup
+  yadmConfigSetup "Rohit Ramesh" "rohit507@gmail.com"
+  lastpassSetup
+  chromeSetup
+  fishSetup
+  fontSetup
+  slackSetup
+  discordSetup
+  vagrantSetup
+  dockerSetup
+  pandocSetup
+  nixSetup
+  haskellIdeEngineSetup
+  gtermSolarizedSetup
+  themePackageSetup
+  defaultPackageSetup
 
 
 
@@ -37,17 +53,8 @@ main = shakeWithPlugins pluginList shakeOpts $ do
 -- .bashrc
 --    -- Aliases
 --    -- Exports
---       -- Pandoc
 --       -- Brittany
 --    -- Facebook Messenger
---    -- Slack
---    -- Discord
---    -- Cinnamon
---       -- GTK Themes
---       -- Icon Themes
---    -- Vagrant
 --    -- Docker
---    -- Virtualbox
---    -- Nix
 --    -- Keyboard.io
 --    -- other default apt installs

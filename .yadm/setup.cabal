@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 680fb31a1e63de7a87cb7d186c47bc5657907ff016f7f8b00a5a15e5306119f5
+-- hash: 60512485174c9eac713fb3faa2a7f297867452458ad8300214acef3c48071ced
 
 name:           setup
 version:        0.1.0.0
@@ -34,7 +34,7 @@ executable setup
       Yadm
       Paths_setup
   hs-source-dirs:
-      setup
+      src
   default-extensions: ApplicativeDo BangPatterns CPP ConstraintKinds DataKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveFunctor DeriveGeneric DeriveLift DeriveTraversable DerivingStrategies DuplicateRecordFields EmptyCase EmptyDataDecls ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving ImplicitParams InstanceSigs KindSignatures LambdaCase MultiParamTypeClasses MultiWayIf NamedFieldPuns NoMonomorphismRestriction OverloadedLabels PackageImports PatternSynonyms QuasiQuotes RankNTypes RecordWildCards RecursiveDo ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeFamilies TypeFamilyDependencies TypeOperators ViewPatterns
   build-depends:
       base >=4.7 && <5

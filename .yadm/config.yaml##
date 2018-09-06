@@ -12,6 +12,7 @@
 # work in this field (default: IMPORTED_ENV_VARS = ["HOME"])
 IMPORTED_ENV_VARS:
   - HOME
+  - USER
 
 # The root directory where the setup project is stored along with the yadm repository
 # (default: YADM_ROOT = $HOME/.yadm)
@@ -24,6 +25,9 @@ STATUS_DIR: ${YADM_ROOT}/.status
 # Directory for various temporary install files we download and use
 INSTALL_DIR: ${YADM_ROOT}/.install
 
+# Directory where we store fonts we want to install
+FONTS_DIR: ${YADM_ROOT}/fonts
+
 # Other Packages we want to install by default
 DEFAULT_PACKAGES:
   - gimp
@@ -31,6 +35,8 @@ DEFAULT_PACKAGES:
   - lxc
   - lxd
   - virtualbox
+  - cinnamon
+  - vlc
 
 # GTK and icon Themes we want to install
 THEME_PACKAGES:
@@ -40,3 +46,7 @@ THEME_PACKAGES:
   - numix-blue-gtk-theme
   - numix-icon-theme
   - materia-gtk-theme
+
+# the version of GHC that haskell IDE engine should be
+# installed for.
+HASKELL_IDE_ENGINE_VERSION: 8.4.3

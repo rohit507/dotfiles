@@ -40,7 +40,7 @@ splitInstalled pkgs = do
     return (installed, notInstalled)
 
 -- | userRule for whether a package is installed
-newtype AptPkg = AptPkg String
+newtype AptPkg = AptPkg { unAptPkg :: String }
     deriving (Eq, Show, Typeable, Hashable, Binary, NFData)
 
 getPkg :: AptPkg -> String
@@ -76,9 +76,10 @@ batchAptInstall pkgs = do
     np -> do
       update
       upgrade
-      withDpkgLock $
-        command_ [Traced "apt install"] "sudo" $
-        ["apt", "install", "-qq", "-y"] ++ map getPkg np
+      withDpkgLock $ do
+        let pkgNms = intercalate " " . map unAptPkg $ np
+        command_ [Traced ("apt install " ++ pkgNms)] "sudo" $
+          ["apt", "install", "-qq", "-y"] ++ map getPkg np
 
 install :: [PkgName] -> Action ()
 install = (>> return ()) . apply . map AptPkg

@@ -12,5 +12,7 @@ plugin = Plugin pre post
     post = return ()
 
 withStatusFlag :: FilePath -> Action () -> Rules FilePath
-withStatusFlag file act = let fn = "${STATUS_DIR}" </> file in
-  (want [fn] <* (fn %> \file -> act >> cmd_ "touch" file)) >> return fn
+withStatusFlag file act = do
+  fn <- applyEnv $ "${STATUS_DIR}" </> file
+  fn %> \file -> act >> cmd_ "touch" file
+  return fn
