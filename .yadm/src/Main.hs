@@ -55,6 +55,5 @@ main = shakeWithPlugins pluginList shakeOpts $ do
 --    -- Exports
 --       -- Brittany
 --    -- Facebook Messenger
---    -- Docker
 --    -- Keyboard.io
 --    -- other default apt installs

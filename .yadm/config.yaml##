@@ -34,9 +34,26 @@ DEFAULT_PACKAGES:
   - inkscape
   - lxc
   - lxd
+  - lxd-tools
   - virtualbox
   - cinnamon
   - vlc
+  - evince
+  - git-gui
+  - graphviz
+  - gzip
+  - hexchat
+  - imagemagick
+  - python3
+  - python3-pip
+  - subversion
+  - tree
+  - unzip
+  - vagrant-libvirt
+  - vagrant-lxc
+  - vagrant-mutate
+  - vagrant-sshfs
+  - zip
 
 # GTK and icon Themes we want to install
 THEME_PACKAGES:
