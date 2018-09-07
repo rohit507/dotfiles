@@ -37,23 +37,7 @@ main = shakeWithPlugins pluginList shakeOpts $ do
   dockerSetup
   pandocSetup
   nixSetup
-  haskellIdeEngineSetup
+  -- haskellIdeEngineSetup
   gtermSolarizedSetup
   themePackageSetup
   defaultPackageSetup
-
-
-
-    --           | sed 's/^LS_COLORS=/set -x LS_COLORS /;s/;$//')
-
-
--- Things to do during bootstrap
---
-
--- .bashrc
---    -- Aliases
---    -- Exports
---       -- Brittany
---    -- Facebook Messenger
---    -- Keyboard.io
---    -- other default apt installs

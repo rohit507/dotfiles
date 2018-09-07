@@ -55,7 +55,9 @@
    dotspacemacs-additional-packages '(solarized-theme
                                       nord-theme
                                       faceup
-                                      protobuf-mode)
+                                      protobuf-mode
+                                      ;;(lsp-haskell :location (recipe :fetcher github :repo "emacs-lsp/lsp-haskell"))
+                                      )
 
    ;; A list of packages that will not be installed and loaded.
    ;; (default '())
@@ -94,6 +96,8 @@
   '(better-defaults
     git
     github
+
+    lsp ;; Language Server Protocol
 
     syntax-checking
     spell-checking

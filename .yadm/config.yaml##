@@ -54,6 +54,7 @@ DEFAULT_PACKAGES:
   - vagrant-mutate
   - vagrant-sshfs
   - zip
+  - build-essential
 
 # GTK and icon Themes we want to install
 THEME_PACKAGES:

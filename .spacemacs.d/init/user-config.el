@@ -9,16 +9,19 @@
   "Configuration that cannot be delegated to layers."
   (dotspacemacs/user-config/pandoc)
   ;(dotspacemacs/user-config/ligatures)
-  (dotspacemacs/user-config/defeat-smartparens)
+  ;(dotspacemacs/user-config/defeat-smartparens)
   (dotspacemacs/user-config/line-width-bar)
   (dotspacemacs/user-config/toggles)
   (dotspacemacs/user-config/fish-color)
   (dotspacemacs/user-config/undo-tree-settings)
   (dotspacemacs/user-config/haskell-indent-settings)
-  (dotspacemacs/user-config/haskell-hare)
+  ;;(dotspacemacs/user-config/haskell-hare)
 
   (with-eval-after-load 'intero
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
+
+  ;;(require 'lsp-haskell)
+  ;;(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
 
   ;; Change the default quit function to one that does not
   ;; interfere with an emacs-server setup

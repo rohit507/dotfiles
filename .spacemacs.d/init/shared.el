@@ -8,7 +8,6 @@
 ;; All configuration is housed in personal layers - see README.
 ;; `init.el' configures spacemacs, defining required `dotspacemacs/...' functions.
 
-
 (defvar linux? (eq system-type 'gnu/linux)
   "Are we on a gnu/linux machine?")
 
@@ -38,5 +37,4 @@
    before packages are loaded. If you are unsure, you should try in setting them in
    `dotspacemacs/user-config' first.
    Package independent settings to run before `dotspacemacs/user-config'."
-
   )
