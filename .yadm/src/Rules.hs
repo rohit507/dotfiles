@@ -169,8 +169,8 @@ fishSetup = do
   fishInstalledFlag <-
     withStatusFlag "fish.default" $ do
       Apt.install ["fish", "git"]
-      fishBin <- which "fish"
-      command_ [Timeout 10] "chsh" ["--shell", fishBin]
+      -- fishBin <- which "fish"
+      -- command_ [Timeout 10] "chsh" ["--shell", fishBin]
 
   want [fishInstalledFlag]
 
@@ -259,8 +259,11 @@ haskellIdeEngineSetup =
 
     hieFlag <-
       withStatusFlag flagName $ do
-        Apt.install ["libicu-dev", "libtinfo-dev"]
+        Apt.install ["libicu-dev", "libtinfo-dev","ghc"]
         need [dir </> hieYaml]
+        command_ [] "stack" ["install","cabal-install"]
+        command_ [Cwd dir] "cabal" ["update"]
+        command_ [Cwd dir] "make" ["build-all"]
         command_ [Cwd dir] "stack" ["build", "--stack-yaml=" ++ hieYaml]
         command_ [Cwd dir] "stack" ["install"]
 

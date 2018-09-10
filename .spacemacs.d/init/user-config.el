@@ -20,8 +20,8 @@
   (with-eval-after-load 'intero
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
-  ;;(require 'lsp-haskell)
-  ;;(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+  (require 'lsp-haskell)
+  (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
 
   ;; Change the default quit function to one that does not
   ;; interfere with an emacs-server setup
