@@ -23,7 +23,6 @@ dependencies:
 default-extensions:
     ApplicativeDo
     BangPatterns
-    CPP
     ConstraintKinds
     DataKinds
     DefaultSignatures
