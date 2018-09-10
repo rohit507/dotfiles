@@ -1,1 +1,0 @@
-/home/rkr/.spacemacs.d/init.el##luxagen-lenovo
