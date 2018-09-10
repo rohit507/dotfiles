@@ -115,5 +115,5 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-if [ $TILIX_ID ] || [ $VTE_VERSION ] ; then source /etc/profile.d/vte.sh; fi # Ubuntu Budgie END
+if [ $TILIX_ID ] || [ $VTE_VERSION ] ; then source /etc/profile.d/vte*.sh; fi # Ubuntu Budgie END
 
