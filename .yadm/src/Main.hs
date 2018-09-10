@@ -29,7 +29,7 @@ main = shakeWithPlugins pluginList shakeOpts $ do
   yadmConfigSetup "Rohit Ramesh" "rohit507@gmail.com"
   lastpassSetup
   chromeSetup
-  -- fishSetup
+  fishSetup
   fontSetup
   slackSetup
   discordSetup

@@ -259,7 +259,7 @@ haskellIdeEngineSetup =
 
     hieFlag <-
       withStatusFlag flagName $ do
-        Apt.install ["libicu-dev", "libtinfo-dev","ghc"]
+        Apt.install ["libicu-dev", "libtinfo-dev","ghc","build-essential"]
         need [dir </> hieYaml]
         command_ [] "stack" ["install","cabal-install"]
         command_ [Cwd dir] "cabal" ["update"]
