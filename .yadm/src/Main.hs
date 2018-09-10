@@ -37,7 +37,7 @@ main = shakeWithPlugins pluginList shakeOpts $ do
   dockerSetup
   pandocSetup
   nixSetup
-  -- haskellIdeEngineSetup
+  haskellIdeEngineSetup
   -- gtermSolarizedSetup
   themePackageSetup
   defaultPackageSetup
