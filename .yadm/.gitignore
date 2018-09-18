@@ -1,4 +1,4 @@
-# Internal build file ignore 
+# Internal build file ignore
 .build/
 repo.git/
 .status/
@@ -16,6 +16,7 @@ cabal-dev
 *.dyn_hi
 .hpc
 .hsenv
+.cabal
 .cabal-sandbox/
 cabal.sandbox.config
 *.prof
