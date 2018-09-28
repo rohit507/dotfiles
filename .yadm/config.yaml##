@@ -46,6 +46,7 @@ DEFAULT_PACKAGES:
   - python3
   - python3-pip
   - subversion
+  - synaptic
   - tree
   - unzip
   - vagrant-libvirt
@@ -58,6 +59,7 @@ DEFAULT_PACKAGES:
 # GTK and icon Themes we want to install
 THEME_PACKAGES:
   - blackbird-gtk-theme
+  - moblin-cursor-theme
   - papirus-icon-theme
   - numix-gtk-theme
   - numix-blue-gtk-theme

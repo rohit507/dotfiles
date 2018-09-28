@@ -31,6 +31,24 @@ pandocSetup :: Rules ()
 pandocSetup = want . (:[]) =<< withStatusFlag "pandoc.installed"
   (Stack.install "pandoc")
 
+fbMessengerSetup :: Rules ()
+fbMessengerSetup = withInstallDir "fb-messenger" $ \ dir -> do
+
+    (dir </> "fb-messenger.deb") %> \out ->
+      command_
+        [Cwd dir]
+        "wget"
+        ["https://updates.messengerfordesktop.com/download/linux/latest/beta?arch=amd64&pkg=deb"
+        ,"-O", "fb-messenger.deb"]
+
+    fbmFlag <-
+      withStatusFlag "fb-messenger.installed" $ do
+        need [dir </> "fb-messenger.deb"]
+        command_ [Cwd dir] "sudo" ["dpkg", "-i", "fb-messenger.deb"]
+  -- asser we want to install lastpass
+    want [fbmFlag]
+
+
 lastpassSetup :: Rules ()
 lastpassSetup =
   withInstallDir "lastpass" $ \dir -> do
