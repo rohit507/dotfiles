@@ -111,8 +111,8 @@
          (haskell :variables haskell-completion-backend 'intero))
 
     (ivy :variables
-         ivy-extra-directories nil
-         ivy-re-builders-alist 'ivy--regex-fuzzy)
+         ivy-extra-directories nil)
+         ;;ivy-re-builders-alist 'ivy--regex-fuzzy)
 
     (org :variables
          org-want-todo-bindings t)
