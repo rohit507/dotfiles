@@ -21,11 +21,11 @@
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
   (require 'lsp-haskell)
-  ;(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+  (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
 
   ;; Change the default quit function to one that does not
   ;; interfere with an emacs-server setup
-  ;;(evil-leader/set-key “q q” ‘spacemacs/frame-killer)
+ ;;(evil-leader/set-key “q q” ‘spacemacs/frame-killer)
   )
 
 (defun dotspacemacs/user-config/haskell-hare ()
