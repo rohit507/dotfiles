@@ -133,7 +133,7 @@
    dotspacemacs-inactive-transparency 50
 
    ;; If non nil unicode symbols are displayed in the mode line. (default t)
-   dotspacemacs-mode-line-unicode-symbols nil
+   dotspacemacs-mode-line-unicode-symbols t
 
    ;; Either nil or a number of seconds. If non-nil zone out after the specified
    ;; number of seconds. (default nil)
@@ -381,7 +381,7 @@
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5) (projects . 7))
+   dotspacemacs-startup-lists '((recents . 8) (projects . 8))
 
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t

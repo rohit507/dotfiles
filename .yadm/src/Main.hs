@@ -36,7 +36,7 @@ main = shakeWithPlugins pluginList shakeOpts $ do
   vagrantSetup
   dockerSetup
   pandocSetup
-  fbMessengerSetup
+  -- fbMessengerSetup
   nixSetup
   haskellIdeEngineSetup
   -- gtermSolarizedSetup

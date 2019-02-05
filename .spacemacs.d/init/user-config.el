@@ -9,23 +9,60 @@
   "Configuration that cannot be delegated to layers."
   (dotspacemacs/user-config/pandoc)
   ;(dotspacemacs/user-config/ligatures)
-  ;(dotspacemacs/user-config/defeat-smartparens)
+  (dotspacemacs/user-config/defeat-smartparens)
   (dotspacemacs/user-config/line-width-bar)
   (dotspacemacs/user-config/toggles)
   (dotspacemacs/user-config/fish-color)
   (dotspacemacs/user-config/undo-tree-settings)
   (dotspacemacs/user-config/haskell-indent-settings)
-  ;;(dotspacemacs/user-config/haskell-hare)
+  ;; (dotspacemacs/user-config/haskell-comment-mod)
+  ;; (dotspacemacs/user-config/haskell-lsp)
+  ;(dotspacemacs/user-config/haskell-hare)
 
   (with-eval-after-load 'intero
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
 
-  (require 'lsp-haskell)
-  (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+  ;(spacemacs/lsp-bind-keys-for-mode haskell-mode-hook)
 
   ;; Change the default quit function to one that does not
   ;; interfere with an emacs-server setup
  ;;(evil-leader/set-key “q q” ‘spacemacs/frame-killer)
+  )
+
+(defun dotspacemacs/user-config/haskell-comment-mod ()
+  (defun my-haskell-comment-setup ()
+    "Configure multi-line comments for haskell."
+    ;; You may want to use `setq-local' instead.
+  ;   (setq comment-start       "{-"
+  ;         comment-end         "-}"
+  ;         comment-multi-line  t
+  ;         comment-padding     nil
+  ;         comment-style       'extra-line
+  ;         comment-continue    " - "
+  ;         comment-empty-lines t))
+  ; (add-hook 'haskell-mode-hook #'my-haskell-comment-setup)
+
+  ; (add-hook 'haskell-mode-hook
+  ;           (lambda () ()
+  ;               (setq comment-start       "--"
+  ;                     comment-end         "^[:blank:]$"
+  ;                     comment-multi-line  t
+  ;                     comment-padding     nil
+  ;                     comment-style       'extra-line
+  ;                     comment-continue    "-- "
+  ;                     comment-start-skip "{-+ *\\|--+ *"
+  ;                     comment-empty-lines t
+  ;                     comment-indent-function 'haskell-comment-indent
+  ;                     ))
+              )
+
+
+(defun dotspacemacs/user-config/haskell-lsp ()
+  (require 'lsp)
+  (require 'lsp-ui)
+  (require 'lsp-haskell)
+  (add-hook 'haskell-mode-hook 'lsp)
+  (add-hook 'haskell-mode-hook 'lsp-haskell-enable)
   )
 
 (defun dotspacemacs/user-config/haskell-hare ()
