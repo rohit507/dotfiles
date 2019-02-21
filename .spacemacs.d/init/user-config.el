@@ -30,8 +30,8 @@
   )
 
 (defun dotspacemacs/user-config/haskell-comment-mod ()
-  (defun my-haskell-comment-setup ()
-    "Configure multi-line comments for haskell."
+  ;;(defun my-haskell-comment-setup ()
+    ;;"Configure multi-line comments for haskell."
     ;; You may want to use `setq-local' instead.
   ;   (setq comment-start       "{-"
   ;         comment-end         "-}"

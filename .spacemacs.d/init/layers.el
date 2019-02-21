@@ -142,6 +142,7 @@
     pandoc
     bibtex
     yaml
+    protobuf
 
     ;; Languages
     c-c++
