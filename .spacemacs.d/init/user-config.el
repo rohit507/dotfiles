@@ -9,7 +9,7 @@
   "Configuration that cannot be delegated to layers."
   (dotspacemacs/user-config/pandoc)
   ;(dotspacemacs/user-config/ligatures)
-  ;(dotspacemacs/user-config/defeat-smartparens)
+  (dotspacemacs/user-config/defeat-smartparens)
   (dotspacemacs/user-config/line-width-bar)
   (dotspacemacs/user-config/toggles)
   (dotspacemacs/user-config/fish-color)

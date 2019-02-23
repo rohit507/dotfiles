@@ -1,1 +1,1 @@
-/home/rkr/.spacemacs.d/init.el##thaumic
+/home/rkr/.spacemacs.d/init.el##luxagen-lenovo
