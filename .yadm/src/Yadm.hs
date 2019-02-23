@@ -32,7 +32,7 @@ withYadmLock act = do
         Just (YadmLock r) -> withResource r 1 $ act
 
 plugin :: Plugin
-plugin = Plugin initYadmLock $ action $ decrypt >> alt
+plugin = Plugin initYadmLock $ action $ alt
 
 add :: FilePath -> Action ()
 add file = withYadmLock $ command_ [Traced "yadm add"] "yadm" $

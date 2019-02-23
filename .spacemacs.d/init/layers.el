@@ -56,7 +56,7 @@
                                       nord-theme
                                       faceup
                                       protobuf-mode
-                                      (lsp-haskell :location (recipe :fetcher github :repo "emacs-lsp/lsp-haskell"))
+                                      ;;(lsp-haskell :location (recipe :fetcher github :repo "emacs-lsp/lsp-haskell"))
                                       )
 
    ;; A list of packages that will not be installed and loaded.
@@ -142,6 +142,7 @@
     pandoc
     bibtex
     yaml
+    protobuf
 
     ;; Languages
     c-c++
@@ -215,7 +216,7 @@
 (defvar dotspacemacs/layers/extra
   '(gnus
     graphviz
-    pdf-tools
+    ;pdf-tools
     vagrant
     ranger
 
