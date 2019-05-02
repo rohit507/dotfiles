@@ -8,7 +8,7 @@
 (defun dotspacemacs/user-config ()
   "Configuration that cannot be delegated to layers."
   (dotspacemacs/user-config/pandoc)
-  ;(dotspacemacs/user-config/ligatures)
+  ;; (dotspacemacs/user-config/ligatures)
   (dotspacemacs/user-config/defeat-smartparens)
   (dotspacemacs/user-config/line-width-bar)
   (dotspacemacs/user-config/toggles)
@@ -17,7 +17,7 @@
   (dotspacemacs/user-config/haskell-indent-settings)
   ;; (dotspacemacs/user-config/haskell-comment-mod)
   ;; (dotspacemacs/user-config/haskell-lsp)
-  ;(dotspacemacs/user-config/haskell-hare)
+  ;; (dotspacemacs/user-config/haskell-hare)
 
   (with-eval-after-load 'intero
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
@@ -26,7 +26,8 @@
 
   ;; Change the default quit function to one that does not
   ;; interfere with an emacs-server setup
- ;;(evil-leader/set-key “q q” ‘spacemacs/frame-killer)
+  ;;(evil-leader/set-key “q q” ‘spacemacs/frame-killer)
+
   )
 
 (defun dotspacemacs/user-config/haskell-comment-mod ()
