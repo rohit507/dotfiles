@@ -61,7 +61,7 @@ xinput set-prop $PEN 'Coordinate Transformation Matrix' 0 1 0 -1 0 1 0 0 1;
 xinput set-prop $TOUCH 'Coordinate Transformation Matrix' 0 1 0 -1 0 1 0 0 1;;
 
 left-up)
-:q
+xinput set-prop $PEN 'Coordinate Transformation Matrix' 0 -1 1 1 0 0 0 0 1;
 xinput set-prop $TOUCH 'Coordinate Transformation Matrix' 0 -1 1 1 0 0 0 0 1;;
 
 esac
