@@ -1,0 +1,1 @@
+/home/rkr/.spacemacs.d/init.el##handbrain
