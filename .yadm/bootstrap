@@ -7,7 +7,7 @@ from pathlib import Path
 # Initial install and bootstrap operations for dotfiles.
 
 # Set up basic commands
-run("sudo apt install -qq git wget", shell=True, check=True)
+run("sudo apt install -qq git wget libgmp-dev", shell=True, check=True)
 
 # fish
 # aptitude

@@ -250,7 +250,7 @@ fontSetup = do
         need [fontDir </> fontFile]
         home <- queryEnv "HOME"
         command_ [Cwd home] "sudo" ["rm", "-rf", ".cache/dconf"]
-        command_ [Cwd fontDir] "sudo" ["font-manager", "-i", fontFile]
+        command_ [Cwd fontDir] "font-manager" [ "-i", fontFile]
         command_ [] "fc-cache" ["-f", "-v"]
   want flags
 

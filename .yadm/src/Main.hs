@@ -26,6 +26,7 @@ main :: IO ()
 main = shakeWithPlugins pluginList shakeOpts $ do
   vimSetup
   gitSetup
+  defaultPackageSetup
   yadmConfigSetup "Rohit Ramesh" "rohit507@gmail.com"
   lastpassSetup
   chromeSetup
@@ -38,7 +39,6 @@ main = shakeWithPlugins pluginList shakeOpts $ do
   pandocSetup
   -- fbMessengerSetup
   nixSetup
-  haskellIdeEngineSetup
+  -- haskellIdeEngineSetup
   -- gtermSolarizedSetup
   themePackageSetup
-  defaultPackageSetup

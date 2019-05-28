@@ -29,6 +29,9 @@ FONTS_DIR: ${YADM_ROOT}/fonts
 
 # Other Packages we want to install by default
 DEFAULT_PACKAGES:
+  - libgmp-dev
+  - zlib1g-dev
+  - font-manager
   - gimp
   - inkscape
   - lxc
