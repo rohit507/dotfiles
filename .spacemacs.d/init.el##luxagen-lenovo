@@ -13,7 +13,7 @@
 ;; dotspacemacs/init and all the default configuration variables are stored in
 ;; this file. This is where you change things like fonts, display settings, and
 ;; the like
-(load "~/.spacemacs.d/init/shared-init")
+(load "~/.spacemacs.d/shared-init")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
