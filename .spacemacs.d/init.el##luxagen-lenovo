@@ -9,6 +9,8 @@
 ;; `init.el' configures spacemacs, defining required `dotspacemacs/...' functions.
 
 ;; Machine specific config goes here 
+(defvar local-font-size 16
+  "The default font size we want to use on this machine.")
 
 ;; dotspacemacs/init and all the default configuration variables are stored in
 ;; this file. This is where you change things like fonts, display settings, and
