@@ -15,10 +15,12 @@
   (dotspacemacs/user-config/fish-color)
   (dotspacemacs/user-config/undo-tree-settings)
   (dotspacemacs/user-config/haskell-indent-settings)
-  (dotspacemacs/user-config/haskell-hare)
+  ;;(dotspacemacs/user-config/haskell-hare)
 
   (with-eval-after-load 'intero
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
+
+  ;; (setq debug-on-error t)
 
   ;; Change the default quit function to one that does not
   ;; interfere with an emacs-server setup
