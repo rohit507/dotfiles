@@ -1,1 +1,1 @@
-/home/rkr/.spacemacs.d/init.el##luxagen-lenovo
+/home/rkr/.spacemacs.d/init.el##handbrain
