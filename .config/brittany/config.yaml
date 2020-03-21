@@ -59,7 +59,6 @@ conf_forward:
     - -XTypeOperators
     - -XViewPatterns
     - -XBangPatterns
-    - -XCPP
     - -XConstraintKinds
     - -XDataKinds
     - -XDefaultSignatures
